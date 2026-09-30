@@ -153,18 +153,18 @@ else if(a==='copy'){const t=document.getElementById('bk');t.select();try{navigat
 else if(a==='restore'){try{const j=JSON.parse(document.getElementById('bk').value);if(!j.start||!j.tx)throw 0;st=j;save()}catch(_){return alert('That text is not a valid backup.')}}
 else if(a==='reset'){if(!confirm('Erase all entries and settings?'))return;st=def();save()}
 render()});
+
 document.addEventListener('change',e=>{const t=e.target,d=t.dataset;
 if(d.s)st.start[d.s]=parseFloat(t.value)||0;
-  
 else if(d.b) {
   if (!checkAdmin()) { t.value = st.budget[d.b] || 0; return; }
   st.budget[d.b]=parseFloat(t.value)||0;
 }
-
 else if(d.n)st.names[d.n]=t.value;
 else if(d.t){const p=st.tpls.find(x=>x.id===d.t);const f=d.f;p[f]=(f==='amt')?(parseFloat(t.value)||0):(f==='count')?Math.max(0,parseInt(t.value)||0):t.value;if(f==='name'&&p.cat===undefined)p.cat=t.value}
 else if(t.id==='lgf')lgF=t.value;else if(t.id==='lyf')lyF=t.value;else if(t.id==='ad')st.ad=t.value;else return;
 save();render()});
+  
 document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('q');n.focus();n.setSelectionRange(p,p)}});
 window.addEventListener('DOMContentLoaded', loadCloudData);
 
