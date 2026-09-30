@@ -14,8 +14,6 @@ input,select,button.b{font:inherit;padding:7px 9px;border:1px solid var(--bd);bo
 <nav id="nav"></nav><div id="app"></div></main>
 <script>
 
-let st = def();
-
 const checkAdmin = () => {
   const code = prompt("Enter team admin passcode to perform this action:");
   if (code && code.toLowerCase() === "catsvball") return true;
