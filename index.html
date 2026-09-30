@@ -148,5 +148,12 @@ else if(d.t){const p=st.tpls.find(x=>x.id===d.t);const f=d.f;p[f]=(f==='amt')?(p
 else if(t.id==='lgf')lgF=t.value;else if(t.id==='lyf')lyF=t.value;else if(t.id==='ad')st.ad=t.value;else return;
 save();render()});
 document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('q');n.focus();n.setSelectionRange(p,p)}});
+window.addEventListener('DOMContentLoaded', loadCloudData);
+
+setInterval(() => {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  loadCloudData();
+}, 5000);
+
 render();
 </script></body></html>
