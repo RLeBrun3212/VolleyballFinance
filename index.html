@@ -120,7 +120,9 @@ function render(){$n=document.getElementById('nav');$n.innerHTML=TABS.map(t=>`<b
 
   async function addTx(o){
   const newId = uid();
-  const dbPayload = { id: newId, date: o.date, fund: o.fund, amt: o.amt, cat: o.cat, desc: o.desc };
+    
+const dbPayload = { id: newId, date: o.date, fund: o.fund, amt: o.amt, cat: o.cat, desc: o.desc, src: o.src };
+    
   st.tx.push(dbPayload);
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/tx`, {
