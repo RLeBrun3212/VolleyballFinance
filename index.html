@@ -60,8 +60,8 @@ const save = async () => {
   try {
     localStorage.setItem(K, JSON.stringify(st));
     await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
-      method: 'POST',
-      headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "resolution=merge" },
+      method: 'PATCH',
+      headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({ id: 1, start: st.start, tpls: st.tpls, names: st.names, budget: st.budget, ad: st.ad })
     });
   } catch(e) {}
