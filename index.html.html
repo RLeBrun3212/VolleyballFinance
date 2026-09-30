@@ -13,10 +13,9 @@ input,select,button.b{font:inherit;padding:7px 9px;border:1px solid var(--bd);bo
 <h1>UNH Men's Volleyball Club – Team Finances</h1><div class="mu">Fiscal year 2027 (July 2026 – June 2027) · last year's history (FY26) used for planning</div>
 <nav id="nav"></nav><div id="app"></div></main>
 <script>
-// PASTE YOUR MASSIVE TRANSACTION HISTORY LINE DIRECTLY ON THE BLANK LINE BELOW:
+// PASTE YOUR MASSIVE TRANSACTION HISTORY LINE (const FY26 = [...];) DIRECTLY ON THE BLANK LINE BELOW:
 <h1>UNH Men's Volleyball Club – Team Finances</h1><div class="mu">Fiscal year 2027 (July 2026 – June 2027) · last year's history (FY26) used for planning</div>
 if(typeof FY26==='undefined'){var FY26=[];}
-
 const K='uvb-fin-v1',FN={SP:'Specific Purpose',GF:'Gift Fund'};
 const fmt=n=>(n<0?'−':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
