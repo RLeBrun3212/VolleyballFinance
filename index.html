@@ -153,7 +153,10 @@ else if(a==='addtpl'){st.tpls.push({id:uid(),name:'New expected item',fund:'SP',
 else if(a==='deltpl'){st.tpls=st.tpls.filter(p=>p.id!==id);st.tx.forEach(t=>{if(t.src&&t.src.startsWith(id+'-'))delete t.src});save()}
 else if(a==='appr'||a==='apprall'){
   if (!checkAdmin()) return;const d=(document.getElementById('ad')||{}).value||today();st.ad=d;(a==='appr'?pending().filter(x=>x.id===id):pending()).forEach(x=>{const nm=st.names[x.id];addTx({date:d,fund:x.p.fund,amt:R(x.p.dir==='in'?x.p.amt:-x.p.amt),cat:x.p.cat||x.p.name,desc:x.p.name+(nm?' – '+nm:' #'+x.i),src:x.id})})}
-else if(a==='undo'){st.tx=st.tx.filter(t=>t.src!==id);save()}
+else if(a==='undo'){
+  try { await fetch(`${SUPABASE_URL}/rest/v1/tx?src=eq.${id}`, { method: 'DELETE', headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } }); } catch(err){}
+  st.tx=st.tx.filter(t=>t.src!==id); save(); render();
+}
 else if(a==='copy'){const t=document.getElementById('bk');t.select();try{navigator.clipboard.writeText(t.value)}catch(_){}return}
 else if(a==='restore'){try{const j=JSON.parse(document.getElementById('bk').value);if(!j.start||!j.tx)throw 0;st=j;save()}catch(_){return alert('That text is not a valid backup.')}}
 else if(a==='reset'){if(!confirm('Erase all entries and settings?'))return;st=def();save()}
