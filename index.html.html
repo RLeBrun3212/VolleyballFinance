@@ -108,3 +108,47 @@ function ov(){
 function planner(){
   const ec=expCats();let t1=0,t2=0,t3=0;const rows=Object.entries(ec).sort((a,b)=>b[1]-a[1]).map(([c,l])=>{const b=bud(c,l),s=spent(c);t1+=l;t2+=b;t3+=s;return `<tr><td>${esc(c)}</td><td class="n">${fmt(l)}</td><td class="n"><input type="number" step="1" data-b="${esc(c)}" value="${b}"></td><td class="n">${fmt(s)}</td><td class="n ${cl(b-s)}">${fmt(b-s)}</td></tr>`}).join('');
   const inc=sumBy(FY26,'i',r=>r[2]);
+return <div class="card"><h2>Where to plan to spend</h2><div class="wrap"><table><tr><th>Category</th><th class="n">Spent FY26</th><th class="n">Budget FY27</th><th class="n">Spent so far</th><th class="n">Remaining</th></tr>${rows}<tr><th>Total</th><th class="n">${fmt(t1)}</th><th class="n">${fmt(t2)}</th><th class="n">${fmt(t3)}</th><th class="n">${fmt(t2-t3)}</th></tr></table></div></div> <div class="card"><h2>Where money came from last year</h2>${bars(inc)}</div>;
+}
+function ledger(){
+const rows=st.tx.filter(t=>lgF==='ALL'||t.fund===lgF).sort((a,b)=>b.date.localeCompare(a.date)).map(t=><tr><td>${t.date}</td><td>${FN[t.fund]}</td><td>${esc(t.cat)}</td><td>${esc(t.desc)}</td><td class="n ${cl(t.amt)}">${fmt(t.amt)}</td><td><button class="b d" data-a="del" data-id="${t.id}">✕</button></td></tr>).join('');
+return <div class="card"><h2>Add a transaction</h2><div class="row"><label>Fund<select id="nf"><option value="SP">Specific Purpose</option><option value="GF">Gift Fund</option></select></label><label>Date<input type="date" id="nd" value="${today()}"></label><label>Money in or out<select id="nt"><option value="in">Money IN (+)</option><option value="out">Money OUT (−)</option></select></label><label>Category<input id="nc" list="cats" placeholder="Pick or type"></label><label>Amount ($)<input type="number" step="0.01" min="0" id="na"></label><label style="flex:1;min-width:160px">Description<input class="w" id="ne" placeholder="What was it for?"></label><button class="b" data-a="add">Add</button></div><datalist id="cats">${allCats().map(c=>).join('')}</datalist></div> <div class="card"><div class="row" style="justify-content:space-between"><h2>This year's transactions</h2><select id="lgf"><option value="ALL">Both funds</option><option value="SP" ${lgF==='SP'?'selected':''}>Specific Purpose</option><option value="GF" ${lgF==='GF'?'selected':''}>Gift Fund</option></select></div>${rows?DateFundCategoryDescriptionAmount${rows}:'<div class="mu">Nothing yet. Add one above.</div>'}</div>;
+}
+function expected(){
+const ps=st.tpls.map(p=><tr><td><input class="w" data-t="${p.id}" data-f="name" value="${esc(p.name)}"></td><td><select data-t="${p.id}" data-f="fund"><option value="SP" ${p.fund==='SP'?'selected':''}>Specific Purpose</option><option value="GF" ${p.fund==='GF'?'selected':''}>Gift Fund</option></select></td><td><select data-t="${p.id}" data-f="dir"><option value="in" ${p.dir==='in'?'selected':''}>In (+)</option><option value="out" ${p.dir==='out'?'selected':''}>Out (−)</option></select></td><td><input type="number" step="0.01" data-t="${p.id}" data-f="amt" value="${p.amt}"></td><td><input type="number" min="0" step="1" style="width:70px" data-t="${p.id}" data-f="count" value="${p.count}"></td><td><button class="b d" data-a="deltpl" data-id="${p.id}">✕</button></td></tr>).join('');
+const ins=insts().map(x=>{const nm=st.names[x.id]||'';return <tr><td>${esc(x.p.name)} #${x.i}</td><td><input data-n="${x.id}" placeholder="Name (optional)" value="${esc(nm)}"></td><td>${FN[x.p.fund]}</td><td class="n ${x.p.dir==='in'?'pos':'neg'}">${fmt(x.p.dir==='in'?x.p.amt:-x.p.amt)}</td><td>${x.tx?✓ received ${x.tx.date} Undo:Approve}</td></tr>}).join('');
+return <div class="card"><h2>Expected transactions (templates)</h2><div class="wrap"><table><tr><th>Name</th><th>Fund</th><th>Direction</th><th>Amount each</th><th>How many</th><th></th></tr>${ps}</table></div><div class="row" style="margin-top:8px"><button class="b s" data-a="addtpl">+ Add expected transaction</button><label>Date recorded on approval<input type="date" id="ad" value="${st.ad||today()}"></label><button class="b" data-a="apprall">Approve all pending (${pending().length})</button></div></div> <div class="card"><h2>Pending &amp; received</h2><div class="wrap"><table><tr><th>Item</th><th>Who</th><th>Fund</th><th class="n">Amount</th><th>Status</th></tr>${ins||'<tr><td class="mu">No expected transactions.</td></tr>'}</table></div></div>;
+}
+function last(){
+const r=FY26.filter(x=>x[1]===lyF),m=q.toLowerCase(),vis=r.filter(x=>!m||x.join(' ').toLowerCase().includes(m)),i=sumBy(r,'i',x=>x[2]),o=sumBy(r,'o',x=>-x[2]);
+return <div class="card"><div class="row"><h2 style="margin:0">Last year (FY26)</h2><select id="lyf"><option value="SP" ${lyF==='SP'?'selected':''}>Specific Purpose</option><option value="GF" ${lyF==='GF'?'selected':''}>Gift Fund</option></select></div></div> <div class="grid"><div class="card"><h2>Money in</h2>${bars(i)}</div><div class="card"><h2>Money out</h2>${bars(o)}</div></div> <div class="card"><div class="row" style="justify-content:space-between"><h2>Every transaction (${vis.length})</h2><input id="q" placeholder="Search…" value="${esc(q)}"></div><div class="wrap"><table><tr><th>Date</th><th>Category</th><th>Description</th><th>From / to</th><th>Reference</th><th class="n">Amount</th></tr>${vis.map(x=>${x[0]}${esc(x[3])}${esc(x[4])}${esc(x[5])}${esc(x[6])}${fmt(x[2])}).join('')}</table></div></div>;
+}
+const TABS=[['ov','Overview'],['pl','Planner'],['lg','This year'],['ex','Expected'],['ly','Last year']];
+function render(){
+const $n=document.getElementById('nav');if(!$n)return;
+$n.innerHTML=TABS.map(t=><button class="${tab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>).join('');
+if(tab==='ov')document.getElementById('app').innerHTML=ov();
+if(tab==='pl')document.getElementById('app').innerHTML=planner();
+if(tab==='lg')document.getElementById('app').innerHTML=ledger();
+if(tab==='ex')document.getElementById('app').innerHTML=expected();
+if(tab==='ly')document.getElementById('app').innerHTML=last();
+}
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.tab){tab=b.dataset.tab;return render()}const a=b.dataset.a,id=b.dataset.id;if(!a)return;
+if(a==='add'){const v=k=>document.getElementById(k).value,amt=parseFloat(v('na'));if(!(amt>0)||!v('nc').trim())return alert('Please enter data.');await addTx({date:v('nd')||today(),fund:v('nf'),amt:R(v('nt')==='in'?amt:-amt),cat:v('nc').trim(),desc:v('ne').trim()||v('nc').trim()})}
+else if(a==='del'){
+try { await fetch(${SUPABASE_URL}/rest/v1/tx?id=eq.${id}, { method: 'DELETE', headers: { "apikey": SUPABASE_KEY, "Authorization": Bearer ${SUPABASE_KEY} } }); } catch(err){}
+st.tx=st.tx.filter(t=>t.id!==id); save(); render();
+}
+else if(a==='addtpl'){st.tpls.push({id:uid(),name:'New item',fund:'SP',dir:'out',amt:0,count:1,cat:'Other'});save();render()}
+else if(a==='deltpl'){st.tpls=st.tpls.filter(p=>p.id!==id);save();render()}
+else if(a==='refresh'){loadCloudData()}
+});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset;
+if(d.s)st.start[d.s]=parseFloat(t.value)||0;
+else if(d.b)st.budget[d.b]=parseFloat(t.value)||0;
+else if(d.n)st.names[d.n]=t.value;
+else if(d.t){const p=st.tpls.find(x=>x.id===d.t),f=d.f;p[f]=(f==='amt')?parseFloat(t.value):(f==='count')?parseInt(t.value):t.value}
+else if(t.id==='lgf')lgF=t.value;else if(t.id==='lyf')lyF=t.value;else return;
+save();render()});
+document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('q');if(n){n.focus();n.setSelectionRange(p,p)}}});
+window.addEventListener('DOMContentLoaded', loadCloudData);
