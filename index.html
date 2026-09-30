@@ -34,8 +34,8 @@ async function loadCloudData() {
     if(res.ok) {
       const data = await res.json();
       if(data && data.length > 0) {
-        const item = data[0];
-        st.start = item.start || st.start;
+      const item = data[0];
+        st.start = { SP: item.start_sp || 10289.42, GF: item.start_gf || 2155.72 };
         st.tpls = item.tpls || st.tpls;
         st.names = item.names || st.names;
         st.budget = item.budget || st.budget;
@@ -44,7 +44,7 @@ async function loadCloudData() {
         await fetch(`${SUPABASE_URL}/rest/v1/settings`, {
           method: 'POST',
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ id: 1, start: st.start, tpls: st.tpls, names: st.names, budget: st.budget, ad: st.ad })
+          body: JSON.stringify({ id: 1, start_sp: st.start.SP, start_gf: st.start.GF, tpls: st.tpls, names: st.names, budget: st.budget, ad: st.ad })
         });
       }
     }
