@@ -153,7 +153,7 @@ const dbPayload = { id: newId, date: o.date, fund: o.fund, amt: o.amt, cat: o.ca
   save(); render();
 }
   
-document.addEventListener('click',async e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,id=t.getAttribute('data-id');if(!a)return;
+document.addEventListener('click',async e=>{const tabBtn=e.target.closest('[data-tab]');if(tabBtn){tab=tabBtn.dataset.tab;render();return;}const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,id=t.getAttribute('data-id');if(!a)return;
 if(a==='add'){
   if (!checkAdmin()) return;
   const v=k=>document.getElementById(k).value,amt=parseFloat(v('na'));if(!(amt>0)||!v('nc').trim())return alert('Please enter a category and an amount greater than 0.');addTx({date:v('nd')||today(),fund:v('nf'),amt:R(v('nt')==='in'?amt:-amt),cat:v('nc').trim(),desc:v('ne').trim()||v('nc').trim()})}
