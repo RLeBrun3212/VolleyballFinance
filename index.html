@@ -193,7 +193,21 @@ else if(d.b) {
 else if(d.n)st.names[d.n]=t.value;
 else if(d.d){if(!st.dates)st.dates={};st.dates[d.d]=t.value;}
 else if(d.t){const p=st.tpls.find(x=>x.id===d.t);const f=d.f;p[f]=(f==='amt')?(parseFloat(t.value)||0):(f==='count')?Math.max(0,parseInt(t.value)||0):t.value;if(f==='name'&&p.cat===undefined)p.cat=t.value}
-else if(d.tx){const x=st.tx.find(y=>y.id==d.tx);if(x)x[d.f]=t.value.trim();}
+else if(d.tx){
+  const x = st.tx.find(y => String(y.id) === String(d.tx));
+  if(x){
+    x[d.f] = t.value.trim();
+    fetch(`${SUPABASE_URL}/rest/v1/tx?id=eq.${encodeURIComponent(d.tx)}`, {
+      method: 'PATCH',
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ [d.f]: x[d.f] })
+    }).catch(e => {});
+  }
+}
 else if(t.id==='lgf')lgF=t.value;else if(t.id==='lyf')lyF=t.value;else if(t.id==='ad')st.ad=t.value;else return;
 save();render()});
   
